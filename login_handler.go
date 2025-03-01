@@ -1,22 +1,27 @@
 package main
 
 import (
-	"errors"
+	"context"
 	"fmt"
 )
 
 func handlerLogin(s *state, cmd command) error {
-	if cmd.args == nil {
-		return errors.New("command expects at least one argument")
+	if len(cmd.args) != 1 {
+		return fmt.Errorf("usage: %s <name>", cmd.name)
 	}
 
-	err := s.cfg.SetUser(cmd.args[0])
+	username := cmd.args[0]
 
+	usr, err := s.dbQueries.GetUser(context.Background(), username)
 	if err != nil {
-		return err
+		return fmt.Errorf("couldn't find user: %w", err)
 	}
 
-	fmt.Printf("User has been set")
+	err = s.cfg.SetUser(usr.Name)
+	if err != nil {
+		return fmt.Errorf("couldn't set current user: %w", err)
+	}
 
+	fmt.Println("User switched successfully!")
 	return nil
 }

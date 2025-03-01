@@ -1,19 +1,30 @@
 package main
 
 import (
-	"fmt"
+	"database/sql"
 	"gator/internal/config"
+	"gator/internal/database"
+	"log"
 	"os"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
 	cfg, err := config.Read()
 	if err != nil {
-		fmt.Println("Error while reading config\n%w", err)
+		log.Fatalf("error while reading config\n%v", err)
+	}
+
+	db, err := sql.Open("postgres", cfg.Db_url)
+	if err != nil {
+		log.Fatalf("error connecting to db: %v", err)
 	}
 
 	state_str := &state{
-		cfg: cfg,
+		cfg:       cfg,
+		db:        db,
+		dbQueries: database.New(db),
 	}
 
 	commands := commands{
@@ -24,19 +35,12 @@ func main() {
 	input := os.Args[1:]
 
 	if len(input) < 2 {
-		fmt.Printf("Expected a command name and its arguments")
-		os.Exit(1)
+		log.Fatal("Usage: cli <command> [args...]")
 	}
 
-	cmd := command{
-		name: input[0],
-		args: input[1:],
-	}
-
-	err = commands.run(state_str, cmd)
+	err = commands.run(state_str, command{name: input[0], args: input[1:]})
 
 	if err != nil {
-		fmt.Println("Error while executing the command:", err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }

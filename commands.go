@@ -1,12 +1,16 @@
 package main
 
 import (
+	"database/sql"
 	"errors"
 	"gator/internal/config"
+	"gator/internal/database"
 )
 
 type state struct {
-	cfg *config.Config
+	cfg       *config.Config
+	db        *sql.DB
+	dbQueries *database.Queries
 }
 
 type command struct {
@@ -34,4 +38,5 @@ func (c *commands) run(s *state, cmd command) error {
 
 func (c *commands) populateCommandsMap() {
 	c.register("login", handlerLogin)
+	c.register("register", handlerRegister)
 }
