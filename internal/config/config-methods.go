@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 )
 
@@ -28,6 +29,10 @@ func (cfg *Config) SetUser(username string) error {
 	cfg.Current_user_name = username
 	configPath, err := getConfigFilePath()
 
+	if err != nil {
+		return err
+	}
+
 	json_content, err := json.Marshal(cfg)
 
 	if err != nil {
@@ -40,4 +45,12 @@ func (cfg *Config) SetUser(username string) error {
 	}
 
 	return nil
+}
+
+func (cfg *Config) GetCurrentUser() (string, error) {
+	if cfg == nil {
+		return "", fmt.Errorf("attempted to read config before being set")
+	}
+
+	return cfg.Current_user_name, nil
 }

@@ -6,6 +6,7 @@ import (
 	"gator/internal/database"
 	"log"
 	"os"
+	"slices"
 
 	_ "github.com/lib/pq"
 )
@@ -34,7 +35,10 @@ func main() {
 
 	input := os.Args[1:]
 
-	if len(input) < 2 {
+	switch {
+	case len(input) == 0:
+		log.Fatal("Usage: cli <command> [args...]")
+	case len(input) == 1 && !slices.Contains(getNoArgsCommands(), input[0]):
 		log.Fatal("Usage: cli <command> [args...]")
 	}
 

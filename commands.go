@@ -39,4 +39,10 @@ func (c *commands) run(s *state, cmd command) error {
 func (c *commands) populateCommandsMap() {
 	c.register("login", handlerLogin)
 	c.register("register", handlerRegister)
+	c.register("reset", handlerReset)
+	c.register("users", handlerUsers)
+}
+
+func getNoArgsCommands() []string {
+	return []string{"reset", "users"}
 }
