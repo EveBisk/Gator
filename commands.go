@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"gator/internal/config"
@@ -11,6 +12,7 @@ type state struct {
 	cfg       *config.Config
 	db        *sql.DB
 	dbQueries *database.Queries
+	ctx       context.Context
 }
 
 type command struct {
@@ -41,8 +43,10 @@ func (c *commands) populateCommandsMap() {
 	c.register("register", handlerRegister)
 	c.register("reset", handlerReset)
 	c.register("users", handlerUsers)
+	c.register("agg", handlerFetchFeed)
+	c.register("addfeed", handlerAddFeed)
 }
 
 func getNoArgsCommands() []string {
-	return []string{"reset", "users"}
+	return []string{"reset", "users", "agg"}
 }

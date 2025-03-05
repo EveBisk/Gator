@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"gator/internal/config"
 	"gator/internal/database"
@@ -26,6 +27,7 @@ func main() {
 		cfg:       cfg,
 		db:        db,
 		dbQueries: database.New(db),
+		ctx:       context.Background(),
 	}
 
 	commands := commands{
