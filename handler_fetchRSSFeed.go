@@ -17,6 +17,6 @@ func handlerFetchFeed(s *state, cmd command) error {
 		return fmt.Errorf("couldn't fetch feed: %w", err)
 	}
 
-	printFeed(*feed)
+	printRSSFeed(*feed)
 	return nil
 }

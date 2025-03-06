@@ -4,10 +4,13 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
+	"gator/internal/database"
 	"html"
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type RSSFeed struct {
@@ -24,6 +27,15 @@ type RSSItem struct {
 	Link        string `xml:"link"`
 	Description string `xml:"description"`
 	PubDate     string `xml:"pubDate"`
+}
+
+type Feed struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Name      string
+	Url       string
+	UserName  string
 }
 
 func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
@@ -67,7 +79,7 @@ func fetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
 	return &feed, nil
 }
 
-func printFeed(feed RSSFeed) {
+func printRSSFeed(feed RSSFeed) {
 	channel := feed.Channel
 	fmt.Printf(" * Title:      %v\n", channel.Title)
 	fmt.Printf(" * Link:    %v\n", channel.Link)
@@ -77,5 +89,25 @@ func printFeed(feed RSSFeed) {
 		fmt.Printf("\t * Title:      %v\n", item.Title)
 		fmt.Printf("\t * Link:    %v\n", item.Link)
 		fmt.Printf("\t * Description:    %v\n", item.Description)
+	}
+}
+
+func printFeed(feed Feed) {
+	fmt.Printf("* ID:            %s\n", feed.ID)
+	fmt.Printf("* Created:       %v\n", feed.CreatedAt)
+	fmt.Printf("* Updated:       %v\n", feed.UpdatedAt)
+	fmt.Printf("* Name:          %s\n", feed.Name)
+	fmt.Printf("* URL:           %s\n", feed.Url)
+	fmt.Printf("* UserName:        %s\n", feed.UserName)
+}
+
+func dbFeedToFeed(dbFeed database.Feed, userName string) Feed {
+	return Feed{
+		CreatedAt: dbFeed.CreatedAt,
+		UpdatedAt: dbFeed.UpdatedAt,
+		Name:      dbFeed.Name,
+		Url:       dbFeed.Url,
+		ID:        dbFeed.ID,
+		UserName:  userName,
 	}
 }
