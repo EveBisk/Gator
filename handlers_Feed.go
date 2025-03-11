@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"gator/internal/database"
+	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -31,6 +32,17 @@ func handlerAddFeed(s *state, cmd command) error {
 	})
 	if err != nil {
 		return fmt.Errorf("couldn't create feed: %w", err)
+	}
+
+	_, err = s.dbQueries.CreateFeedFollow(s.ctx, database.CreateFeedFollowParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		UserID:    user.ID,
+		FeedID:    feed.ID,
+	})
+	if err != nil {
+		log.Printf("Error while adding feed follow")
 	}
 
 	fmt.Print("Feed entry created:\n")

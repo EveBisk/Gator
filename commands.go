@@ -46,8 +46,10 @@ func (c *commands) populateCommandsMap() {
 	c.register("agg", handlerFetchFeed)
 	c.register("addfeed", handlerAddFeed)
 	c.register("feeds", handlerGetAllFeeds)
+	c.register("follow", handlerFollow)
+	c.register("following", handlerFollowing)
 }
 
 func getNoArgsCommands() []string {
-	return []string{"reset", "users", "agg", "feeds"}
+	return []string{"reset", "users", "agg", "feeds", "following"}
 }
