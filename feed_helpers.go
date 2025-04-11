@@ -7,6 +7,7 @@ import (
 	"gator/internal/database"
 	"html"
 	"io"
+	"log"
 	"net/http"
 	"time"
 
@@ -110,4 +111,26 @@ func dbFeedToFeed(dbFeed database.Feed, userName string) Feed {
 		ID:        dbFeed.ID,
 		UserName:  userName,
 	}
+}
+
+func scrapeFeeds(s *state) error {
+	feed, err := s.dbQueries.GetNextFeedToFetch(s.ctx)
+	if err != nil {
+		return fmt.Errorf("error retrieving next feed url %w", err)
+	}
+
+	fmt.Printf("Sending request to %s", feed.Url)
+
+	err = s.dbQueries.MarkFeedFetched(s.ctx, feed.ID)
+	if err != nil {
+		log.Printf("error marking feed %v as fetched", feed.ID)
+	}
+
+	feed_content, err := fetchFeed(s.ctx, feed.Url)
+	if err != nil {
+		return fmt.Errorf("error fetching feed content %w", err)
+	}
+
+	printRSSFeed(*feed_content)
+	return nil
 }
