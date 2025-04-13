@@ -2,20 +2,19 @@ package main
 
 import (
 	"fmt"
+	"gator/internal/config"
 	"gator/internal/domain"
 	"gator/internal/service"
 )
 
-func handlerFollow(s *state, cmd command, user domain.User) error {
+func handlerFollow(s *config.State, cmd command, user domain.User) error {
 	if len(cmd.args) != 1 {
 		return fmt.Errorf("usage: %v <name>", cmd.name)
 	}
 
 	feedUrl := cmd.args[0]
 	feed_follow, err := service.CreateFeedFollowForUser(
-		s.ctx,
-		s.repos.feedRepo,
-		s.repos.feedFollowRepo,
+		s,
 		feedUrl,
 		user.ID,
 	)
@@ -29,8 +28,8 @@ func handlerFollow(s *state, cmd command, user domain.User) error {
 	return nil
 }
 
-func handlerGetFollowing(s *state, cmd command, user domain.User) error {
-	feed_follows, err := s.repos.feedFollowRepo.GetFeedFollowsForUser(s.ctx, user.ID)
+func handlerGetFollowing(s *config.State, cmd command, user domain.User) error {
+	feed_follows, err := s.Repos.FeedFollowRepo.GetFeedFollowsForUser(s.Ctx, user.ID)
 	if err != nil {
 		return fmt.Errorf("couldn't fetch feeds for user: %w", err)
 	}
@@ -40,14 +39,14 @@ func handlerGetFollowing(s *state, cmd command, user domain.User) error {
 	return nil
 }
 
-func handlerDeleteFollow(s *state, cmd command, user domain.User) error {
+func handlerDeleteFollow(s *config.State, cmd command, user domain.User) error {
 	if len(cmd.args) != 1 {
 		return fmt.Errorf("usage: %v <name>", cmd.name)
 	}
 
 	feedUrl := cmd.args[0]
-	err := s.repos.feedFollowRepo.RemoveFollowByUserURL(
-		s.ctx,
+	err := s.Repos.FeedFollowRepo.RemoveFollowByUserURL(
+		s.Ctx,
 		feedUrl,
 		user.ID,
 	)

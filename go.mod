@@ -1,4 +1,4 @@
-module gator
+module github.com/EveBisk/gator
 
 go 1.23.1
 

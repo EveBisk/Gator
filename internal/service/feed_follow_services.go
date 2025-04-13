@@ -1,27 +1,24 @@
 package service
 
 import (
-	"context"
 	"fmt"
+	"gator/internal/config"
 	"gator/internal/domain"
-	"gator/internal/repository"
 
 	"github.com/google/uuid"
 )
 
 func CreateFeedFollowForUser(
-	ctx context.Context,
-	feedRepo *repository.FeedRepository,
-	feedFollowRepo *repository.FeedFollowRepository,
+	s *config.State,
 	feedUrl string,
 	userId uuid.UUID,
 ) (domain.FeedFollow, error) {
-	feed, err := feedRepo.GetFeedIdFromURL(ctx, feedUrl)
+	feed, err := s.Repos.FeedRepo.GetFeedIdFromURL(s.Ctx, feedUrl)
 	if err != nil {
 		return domain.FeedFollow{}, err
 	}
 
-	feed_follow, err := feedFollowRepo.CreateFeedFollow(ctx, feed.ID, userId)
+	feed_follow, err := s.Repos.FeedFollowRepo.CreateFeedFollow(s.Ctx, feed.ID, userId)
 	if err != nil {
 		return domain.FeedFollow{}, err
 	}

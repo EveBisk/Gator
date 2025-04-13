@@ -4,41 +4,44 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
+	"gator/internal/config"
 	"gator/internal/domain"
-	"gator/internal/repository"
 	"html"
 	"io"
 	"net/http"
 	"time"
 )
 
-func ScrapeFeeds(feedRepo *repository.FeedRepository, ctx context.Context) error {
-	feed, err := feedRepo.GetNextFeedToFetch(ctx)
+func ScrapeFeeds(s *config.State) error {
+	// Depedencies
+	feedRepo := s.Repos.FeedRepo
+
+	feed, err := feedRepo.GetNextFeedToFetch(s.Ctx)
 	if err != nil {
 		return fmt.Errorf("error retrieving next feed url %w", err)
 	}
 
 	fmt.Printf("Sending request to %s", feed.Url)
 
-	err = feedRepo.MarkFeedFetched(ctx, feed.ID)
+	err = feedRepo.MarkFeedFetched(s.Ctx, feed.ID)
 	if err != nil {
 		return err
 	}
 
-	feed_content, err := fetchFeed(ctx, feed.Url)
+	feed_content, err := fetchFeed(s.Ctx, feed.Url)
 	if err != nil {
 		return fmt.Errorf("error fetching feed content %w", err)
 	}
 
 	// We are going to save the feeds later
-	feed_content.PrintRSSFeed()
+	SavePostsofRSSFeed(s, feed_content, feed.ID)
 	return nil
 }
 
-func fetchFeed(ctx context.Context, feedURL string) (*domain.RSSFeed, error) {
+func fetchFeed(ctx context.Context, feedURL string) (domain.RSSFeed, error) {
 	req, err := http.NewRequestWithContext(ctx, "GET", feedURL, nil)
 	if err != nil {
-		return nil, fmt.Errorf("error creating new rss feed request: %v", err)
+		return domain.RSSFeed{}, fmt.Errorf("error creating new rss feed request: %v", err)
 	}
 	req.Header.Set("User-Agent", "gator")
 
@@ -51,18 +54,18 @@ func fetchFeed(ctx context.Context, feedURL string) (*domain.RSSFeed, error) {
 	client := &http.Client{Transport: tr}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("request failed: %v", err)
+		return domain.RSSFeed{}, fmt.Errorf("request failed: %v", err)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("error reading response body: %v", err)
+		return domain.RSSFeed{}, fmt.Errorf("error reading response body: %v", err)
 	}
 
 	feed := domain.RSSFeed{}
 	err = xml.Unmarshal(body, &feed)
 	if err != nil {
-		return nil, fmt.Errorf("error unmarshalling response body: %v", err)
+		return domain.RSSFeed{}, fmt.Errorf("error unmarshalling response body: %v", err)
 	}
 
 	for _, item := range feed.Channel.Item {
@@ -72,18 +75,18 @@ func fetchFeed(ctx context.Context, feedURL string) (*domain.RSSFeed, error) {
 	feed.Channel.Title = html.UnescapeString(feed.Channel.Title)
 	feed.Channel.Description = html.UnescapeString(feed.Channel.Description)
 
-	return &feed, nil
+	return feed, nil
 }
 
-func GetFeedsWithUsers(feedRepo *repository.FeedRepository, userRepo *repository.UserRepository, ctx context.Context) ([]domain.Feed, error) {
-	feeds, err := feedRepo.GetAllFeeds(ctx)
+func GetFeedsWithUsers(s *config.State) ([]domain.Feed, error) {
+	feeds, err := s.Repos.FeedRepo.GetAllFeeds(s.Ctx)
 	if err != nil {
 		return []domain.Feed{}, fmt.Errorf("couldn't get feeds: %w", err)
 	}
 
 	for i := range feeds {
 		feed := &feeds[i]
-		usr, err := userRepo.GetUserByID(ctx, feed.UserID)
+		usr, err := s.Repos.UserRepo.GetUserByID(s.Ctx, feed.UserID)
 		if err != nil {
 			return []domain.Feed{}, fmt.Errorf("couldn't get feed user: %w", err)
 		}

@@ -25,21 +25,22 @@ func main() {
 	}
 
 	dbQueries := database.New(db)
-	// I am using state as a form of depedency injection in the different parts of the code
-	state_str := &state{
-		cfg:       cfg,
-		db:        db,
-		dbQueries: dbQueries,
-		ctx:       context.Background(),
-		repos: repositories{
-			userRepo:       repository.NewUserRepository(dbQueries),
-			feedRepo:       repository.NewFeedRepository(dbQueries),
-			feedFollowRepo: repository.NewFeedFollowRepository(dbQueries),
+	// I am using config.State as a form of depedency injection in the different parts of the code
+	state := &config.State{
+		Cfg:       cfg,
+		Db:        db,
+		DbQueries: dbQueries,
+		Ctx:       context.Background(),
+		Repos: config.Repositories{
+			UserRepo:       repository.NewUserRepository(dbQueries),
+			FeedRepo:       repository.NewFeedRepository(dbQueries),
+			FeedFollowRepo: repository.NewFeedFollowRepository(dbQueries),
+			PostsRepo:      repository.NewPostRepository(dbQueries),
 		},
 	}
 
 	commands := commands{
-		commandsMap: make(map[string]func(*state, command) error),
+		commandsMap: make(map[string]func(*config.State, command) error),
 	}
 	commands.populateCommandsMap()
 
@@ -52,7 +53,7 @@ func main() {
 		log.Fatal("Usage: cli <command> [args...]")
 	}
 
-	err = commands.run(state_str, command{name: input[0], args: input[1:]})
+	err = commands.run(state, command{name: input[0], args: input[1:]})
 
 	if err != nil {
 		log.Fatal(err)

@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
+	"gator/internal/config"
 )
 
-func handlerGetUsers(s *state, cmd command) error {
-	usrs, err := s.repos.userRepo.GetUsers(s.ctx)
+func handlerGetUsers(s *config.State, cmd command) error {
+	usrs, err := s.Repos.UserRepo.GetUsers(s.Ctx)
 	if err != nil {
 		return fmt.Errorf("couldn't get users: %w", err)
 	}
 
-	current_user, err := s.cfg.GetCurrentUser()
+	current_user, err := s.Cfg.GetCurrentUser()
 
 	if err != nil {
 		return err
