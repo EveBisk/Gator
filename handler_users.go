@@ -1,12 +1,11 @@
 package main
 
 import (
-	"context"
 	"fmt"
 )
 
-func handlerUsers(s *state, cmd command) error {
-	usrs, err := s.dbQueries.GetUsers(context.Background())
+func handlerGetUsers(s *state, cmd command) error {
+	usrs, err := s.repos.userRepo.GetUsers(s.ctx)
 	if err != nil {
 		return fmt.Errorf("couldn't get users: %w", err)
 	}

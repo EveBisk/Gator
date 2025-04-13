@@ -6,6 +6,7 @@ import (
 	"errors"
 	"gator/internal/config"
 	"gator/internal/database"
+	repo "gator/internal/repository"
 )
 
 type state struct {
@@ -13,6 +14,13 @@ type state struct {
 	db        *sql.DB
 	dbQueries *database.Queries
 	ctx       context.Context
+	repos     repositories
+}
+
+type repositories struct {
+	userRepo       *repo.UserRepository
+	feedRepo       *repo.FeedRepository
+	feedFollowRepo *repo.FeedFollowRepository
 }
 
 type command struct {
@@ -42,12 +50,12 @@ func (c *commands) populateCommandsMap() {
 	c.register("login", handlerLogin)
 	c.register("register", handlerRegister)
 	c.register("reset", handlerReset)
-	c.register("users", handlerUsers)
+	c.register("users", handlerGetUsers)
 	c.register("agg", handlerFetchFeed)
 	c.register("addfeed", middlewareLoggedIn(handlerAddFeed))
 	c.register("feeds", handlerGetAllFeeds)
 	c.register("follow", middlewareLoggedIn(handlerFollow))
-	c.register("following", middlewareLoggedIn(handlerFollowing))
+	c.register("following", middlewareLoggedIn(handlerGetFollowing))
 	c.register("unfollow", middlewareLoggedIn(handlerDeleteFollow))
 }
 

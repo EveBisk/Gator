@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 )
 
@@ -11,8 +10,7 @@ func handlerLogin(s *state, cmd command) error {
 	}
 
 	username := cmd.args[0]
-
-	usr, err := s.dbQueries.GetUserByName(context.Background(), username)
+	usr, err := s.repos.userRepo.GetUserByName(s.ctx, username)
 	if err != nil {
 		return fmt.Errorf("couldn't find user: %w", err)
 	}

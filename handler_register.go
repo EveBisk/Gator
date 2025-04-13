@@ -1,12 +1,7 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"gator/internal/database"
-	"time"
-
-	"github.com/google/uuid"
 )
 
 func handlerRegister(s *state, cmd command) error {
@@ -14,15 +9,7 @@ func handlerRegister(s *state, cmd command) error {
 		return fmt.Errorf("usage: %v <name>", cmd.name)
 	}
 
-	ctx := context.Background()
-	new_user_params := database.CreateUserParams{
-		ID:        uuid.New(),
-		Name:      cmd.args[0],
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	}
-	usr, err := s.dbQueries.CreateUser(ctx, new_user_params)
-
+	usr, err := s.repos.userRepo.CreateUser(s.ctx, cmd.args[0])
 	if err != nil {
 		return fmt.Errorf("couldn't create user: %w", err)
 	}
@@ -33,11 +20,6 @@ func handlerRegister(s *state, cmd command) error {
 	}
 
 	fmt.Printf("User has been created successfully:")
-	printUser(usr)
+	usr.Print()
 	return nil
-}
-
-func printUser(user database.User) {
-	fmt.Printf(" * ID:      %v\n", user.ID)
-	fmt.Printf(" * Name:    %v\n", user.Name)
 }

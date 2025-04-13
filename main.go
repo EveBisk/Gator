@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"gator/internal/config"
 	"gator/internal/database"
+	"gator/internal/repository"
 	"log"
 	"os"
 	"slices"
@@ -23,11 +24,18 @@ func main() {
 		log.Fatalf("error connecting to db: %v", err)
 	}
 
+	dbQueries := database.New(db)
+	// I am using state as a form of depedency injection in the different parts of the code
 	state_str := &state{
 		cfg:       cfg,
 		db:        db,
-		dbQueries: database.New(db),
+		dbQueries: dbQueries,
 		ctx:       context.Background(),
+		repos: repositories{
+			userRepo:       repository.NewUserRepository(dbQueries),
+			feedRepo:       repository.NewFeedRepository(dbQueries),
+			feedFollowRepo: repository.NewFeedFollowRepository(dbQueries),
+		},
 	}
 
 	commands := commands{
