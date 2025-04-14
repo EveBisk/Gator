@@ -2,7 +2,8 @@ package main
 
 import (
 	"errors"
-	"gator/internal/config"
+
+	"github.com/EveBisk/gator/internal/config"
 )
 
 type command struct {
