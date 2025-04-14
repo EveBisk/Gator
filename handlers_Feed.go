@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
-	"gator/internal/config"
-	"gator/internal/domain"
-	"gator/internal/service"
 	"log"
 	"time"
+
+	"github.com/EveBisk/gator/internal/config"
+
+	"github.com/EveBisk/gator/internal/domain"
+
+	"github.com/EveBisk/gator/internal/service"
 )
 
 func handlerAggFeed(s *config.State, cmd command) error {

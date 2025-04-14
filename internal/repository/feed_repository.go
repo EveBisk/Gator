@@ -2,9 +2,11 @@ package repository
 
 import (
 	"context"
-	"gator/internal/database"
-	"gator/internal/domain"
 	"time"
+
+	"github.com/EveBisk/gator/internal/database"
+
+	"github.com/EveBisk/gator/internal/domain"
 
 	"github.com/google/uuid"
 )

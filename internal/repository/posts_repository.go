@@ -3,8 +3,10 @@ package repository
 import (
 	"context"
 	"database/sql"
-	db "gator/internal/database"
-	"gator/internal/domain"
+
+	db "github.com/EveBisk/gator/internal/database"
+
+	"github.com/EveBisk/gator/internal/domain"
 
 	"github.com/google/uuid"
 )

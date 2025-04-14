@@ -3,8 +3,9 @@ package config
 import (
 	"context"
 	"database/sql"
-	"gator/internal/database"
-	repo "gator/internal/repository"
+
+	database "github.com/EveBisk/gator/internal/database"
+	repo "github.com/EveBisk/gator/internal/repository"
 )
 
 type State struct {

@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
-	"gator/internal/config"
-	"gator/internal/domain"
+
+	"github.com/EveBisk/gator/internal/config"
+
 	"strconv"
+
+	"github.com/EveBisk/gator/internal/domain"
 )
 
 func handlerBrowse(s *config.State, cmd command, user domain.User) error {

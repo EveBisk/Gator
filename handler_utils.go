@@ -1,8 +1,9 @@
 package main
 
 import (
-	"gator/internal/config"
-	"gator/internal/domain"
+	"github.com/EveBisk/gator/internal/config"
+
+	"github.com/EveBisk/gator/internal/domain"
 )
 
 func middlewareLoggedIn(handler func(s *config.State, cmd command, user domain.User) error) func(*config.State, command) error {

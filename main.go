@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"database/sql"
-	"gator/internal/config"
-	"gator/internal/database"
-	"gator/internal/repository"
 	"log"
 	"os"
 	"slices"
 
+	"github.com/EveBisk/gator/internal/config"
+
+	"github.com/EveBisk/gator/internal/database"
+	"github.com/EveBisk/gator/internal/repository"
 	_ "github.com/lib/pq"
 )
 

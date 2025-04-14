@@ -1,9 +1,11 @@
 package service
 
 import (
-	"gator/internal/config"
-	"gator/internal/domain"
 	"time"
+
+	"github.com/EveBisk/gator/internal/config"
+
+	"github.com/EveBisk/gator/internal/domain"
 
 	"github.com/google/uuid"
 )

@@ -2,9 +2,12 @@ package main
 
 import (
 	"fmt"
-	"gator/internal/config"
-	"gator/internal/domain"
-	"gator/internal/service"
+
+	"github.com/EveBisk/gator/internal/config"
+
+	"github.com/EveBisk/gator/internal/domain"
+
+	"github.com/EveBisk/gator/internal/service"
 )
 
 func handlerFollow(s *config.State, cmd command, user domain.User) error {

@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"gator/internal/config"
+
+	"github.com/EveBisk/gator/internal/config"
 )
 
 func handlerReset(s *config.State, cmd command) error {

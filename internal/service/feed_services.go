@@ -4,12 +4,14 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
-	"gator/internal/config"
-	"gator/internal/domain"
 	"html"
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/EveBisk/gator/internal/config"
+
+	"github.com/EveBisk/gator/internal/domain"
 )
 
 func ScrapeFeeds(s *config.State) error {

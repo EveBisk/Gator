@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"gator/internal/config"
+
+	"github.com/EveBisk/gator/internal/config"
 )
 
 func handlerLogin(s *config.State, cmd command) error {

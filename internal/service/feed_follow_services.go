@@ -2,8 +2,10 @@ package service
 
 import (
 	"fmt"
-	"gator/internal/config"
-	"gator/internal/domain"
+
+	"github.com/EveBisk/gator/internal/config"
+
+	"github.com/EveBisk/gator/internal/domain"
 
 	"github.com/google/uuid"
 )
